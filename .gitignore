@@ -1,0 +1,6 @@
+node_modules/
+pkg/
+dist/
+output.bin
+.DS_Store
+target
