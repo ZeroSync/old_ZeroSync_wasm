@@ -206,6 +206,7 @@ dependencies = [
  "wasm-bindgen",
  "winter-crypto",
  "winter-math",
+ "winter-utils",
  "winter-verifier",
 ]
 

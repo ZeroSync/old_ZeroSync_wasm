@@ -6,7 +6,7 @@ use winterfell::StarkProof;
 use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
 use winter_math::StarkField;
-use sha3::{Digest, Sha3_256};
+use sha3::{ Digest, Sha3_256 };
 use std::u32;
 
 
@@ -58,7 +58,7 @@ fn read_hash(pub_inputs: &PublicInputs) -> String{
 
 
 fn read_utreexo_roots(pub_inputs: &PublicInputs) -> Vec<String>{
-    let result = Vec::new()
+    let mut result = Vec::new();
     for _ in 0..27 {
         result.push( read_felt(pub_inputs) )
     }
@@ -120,7 +120,7 @@ pub fn verify(buffer: &Uint8Array) -> JsValue {
     let difficulty = read_hex(&pub_inputs);
 
     // Read time stamps
-    let timestamps = Vec::new();
+    let mut timestamps = Vec::new();
     for _ in 0..11 {
         timestamps.push( read_uint32(&pub_inputs) );        
     }
