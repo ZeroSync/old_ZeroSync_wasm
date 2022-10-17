@@ -7,6 +7,14 @@ use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
 use winter_math::StarkField;
 use sha3::{Digest, Sha3_256};
+use std::u32;
+
+
+#[derive(Serialize, Deserialize)]
+struct ProofData {
+    input_bytes: Vec<u8>,
+    proof_bytes: Vec<u8>,
+}
 
 
 // The size of our compiled Bitcoin program
@@ -32,8 +40,6 @@ fn read_4_bytes(pub_inputs: &PublicInputs) -> String{
     format!("{:0>8}", felt ).to_string()
 }
 
-use std::u32;
-
 fn read_uint32(pub_inputs: &PublicInputs) -> u32{
     let felt = &read_felt(pub_inputs)[3..];
     let z = u32::from_str_radix(felt, 16);
@@ -53,14 +59,12 @@ fn read_hash(pub_inputs: &PublicInputs) -> String{
 
 fn read_utreexo_roots(pub_inputs: &PublicInputs) -> Vec<String>{
     let result = Vec::new()
-    for _ in 0..28 {
+    for _ in 0..27 {
         result.push( read_felt(pub_inputs) )
     }
 
     result
 }
-
-
 
 
 fn compute_program_hash(pub_inputs: &PublicInputs)->String{
@@ -91,8 +95,6 @@ pub struct BitcoinState {
 }
 
 
-
-
 #[wasm_bindgen]
 pub fn verify(buffer: &Uint8Array) -> JsValue {
     // Load proof and public inputs
@@ -105,7 +107,7 @@ pub fn verify(buffer: &Uint8Array) -> JsValue {
     // Compute the program hash
     let program_hash = compute_program_hash(&pub_inputs);
 
-    // Read the Block height 
+    // Read the block height 
     let block_height = read_uint32(&pub_inputs);
 
     // Read the block hash
@@ -114,7 +116,7 @@ pub fn verify(buffer: &Uint8Array) -> JsValue {
     // Read total chain work
     let total_work = read_hex(&pub_inputs);
     
-    // Read difficulty
+    // Read the difficulty
     let difficulty = read_hex(&pub_inputs);
 
     // Read time stamps
@@ -123,35 +125,28 @@ pub fn verify(buffer: &Uint8Array) -> JsValue {
         timestamps.push( read_uint32(&pub_inputs) );        
     }
     
+    // Read the start time of the current difficulty epoch
     let epoch_start_time = read_uint32(&pub_inputs);
 
+    // Read the utreexo roots
     let utreexo_roots = read_utreexo_roots(&pub_inputs);
 
+    // Assemble the current state of Bitcoin
+    let bitcoin_state = BitcoinState {
+        prev_timestamps: timestamps,
+        best_block_hash: block_hash,
+        block_height: block_height,
+        difficulty: difficulty,
+        total_work: total_work,
+        epoch_start_time: epoch_start_time,
+        program_hash: program_hash,
+        utreexo_roots: utreexo_roots,
+    };
 
     // Verify execution
     match winterfell::verify::<ProcessorAir>(proof, pub_inputs) {
-        Ok(_) => {
-
-            let bitcoin_state = BitcoinState {
-                prev_timestamps: timestamps,
-                best_block_hash: block_hash,
-                block_height: block_height,
-                difficulty: difficulty,
-                total_work: total_work,
-                epoch_start_time: epoch_start_time,
-                program_hash: program_hash,
-                utreexo_roots: utreexo_roots,
-            };
-
-            serde_wasm_bindgen::to_value(&bitcoin_state).unwrap()
-        },
+        Ok(_) => serde_wasm_bindgen::to_value(&bitcoin_state).unwrap(),
         Err(_err) => serde_wasm_bindgen::to_value("Proof is invalid").unwrap(),
     }
 
-}
-
-#[derive(Serialize, Deserialize)]
-struct ProofData {
-    input_bytes: Vec<u8>,
-    proof_bytes: Vec<u8>,
 }
