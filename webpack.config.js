@@ -11,7 +11,9 @@ module.exports = {
         library: "stark_verifier",
     },
     plugins: [
-        new HtmlWebpackPlugin(),
+        new HtmlWebpackPlugin({
+          template: 'src/index.html'
+        }),
         new WasmPackPlugin({
             crateDirectory: path.resolve(__dirname, ".")
         }),

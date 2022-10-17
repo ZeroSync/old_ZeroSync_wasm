@@ -1,5 +1,5 @@
 # ZeroSync WASM Verifier
-The Giza verifier and a zerosync proof parser compiled to WebAssembly.
+The Giza STARK verifier and a ZeroSync proof parser compiled to WebAssembly.
 
 
 
