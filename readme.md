@@ -15,3 +15,5 @@ npm run build
 cd pkg
 python -m http.server 
 ```
+
+The demo expects a chain proof named `proof.bin` in `pkg`.

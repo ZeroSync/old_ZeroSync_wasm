@@ -206,7 +206,7 @@
     </header>
     <main>
         <h1>Bitcoin Chain Verifier</h1>
-        <p>This is a simple demo of the <a href="https://github.com/zerosync/zerosync">ZeroSync</a> chain state proof. It runs the <a href="https://github.com/maxgillett/giza/tree/master/wasm" target="_blank">Giza STARK verifier in WebAssembly</a> to verify a proof of the Bitcoin chain in your browser.
+        <p>This is a simple demo of the <a href="https://github.com/zerosync/zerosync">ZeroSync</a> chain state proof. It runs the <a href="https://github.com/zerosync/zerosync_wasm/" target="_blank">Giza STARK verifier in WebAssembly</a> to verify a proof of the Bitcoin chain in your browser.
         </p>
         <p>
             🚧 This proof is work in progress. The demo is a lot of "fake it till you make it". So far, we've generated proofs only for the first few thousand blocks. Also this website currently validates just a <i>block</i> and fakes the validation of the previous <i>chain</i>. We're still <a href="https://github.com/zerosync/zerosync/pull/2">working on proof recursion</a> for <a href="https://github.com/maxgillett/giza">the Giza prover</a>. Recursion is about validating a STARK in a STARK. This allows us to iteratively extend the previous chain proof with a next block proof. For more details check out our <a href="https://github.com/zerosync/zerosync/blob/main/docs/roadmap.md">project roadmap</a>. Or <a href="https://twitter.com/zerosync_">follow us on Twitter</a> to get notified about updates on making the vision of ZeroSync a reality.
